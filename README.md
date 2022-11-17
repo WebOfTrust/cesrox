@@ -3,14 +3,10 @@
 [![cesrox](https://github.com/WebOfTrust/cesrox/actions/workflows/test.yml/badge.svg)](https://github.com/WebOfTrust/cesrox/actions/workflows/test.yml)
 [![codecov](https://codecov.io/gh/WebOfTrust/cesrox/branch/main/graph/badge.svg?token=QEEVE1WTPX)](https://codecov.io/gh/WebOfTrust/cesrox)
 
-Rust implementation of the core CESR encoding format according to the [IETF CESR Spec](https://github.com/WebOfTrust/ietf-cesr). A bridge to the beautiful island.
-
-CESR stands for Composable Event Streaming Representation. It represents cryptographic primitives and any other data structure compactly and efficiently with a combined binary and text protocol.
-
-For a more complete definition of CESR refer to the following IETF draft spec:
-
-## What is CESR?
-https://weboftrust.github.io/ietf-cesr/draft-ssmith-cesr.html
+Rust implementation of [Composable Event Streaming Representation](https://github.com/WebOfTrust/ietf-cesr). 
+A bridge to the beautiful island.
+ 
+It represents cryptographic primitives and any other data structure compactly and efficiently with a combined binary and text protocol.
 
 # Community
 ## Bi-weekly Meeting 
