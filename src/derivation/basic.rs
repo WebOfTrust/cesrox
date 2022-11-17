@@ -84,17 +84,61 @@ impl FromStr for Basic {
 #[cfg(test)]
 mod basic_tests {
     use crate::derivation::basic::Basic;
+    use crate::derivation::basic::FromStr;
     use crate::derivation::DerivationCode;
+    use crate::error::Error;
+    use crate::error::Error::DeserializeError;
 
     #[test]
     fn test_code_len() {
-        let len = Basic::Ed25519.code_len();
-        assert_eq!(len, 1);
-        let len = Basic::Ed25519NT.code_len();
-        assert_eq!(len, 1);
-        let len = Basic::X25519.code_len();
-        assert_eq!(len, 1);
-        let len = Basic::X448.code_len();
-        assert_eq!(len, 1);
+        assert_eq!(Basic::Ed25519.code_len(), 1);
+        assert_eq!(Basic::Ed25519NT.code_len(), 1);
+        assert_eq!(Basic::X25519.code_len(), 1);
+        assert_eq!(Basic::X448.code_len(), 1);
+
+        assert_eq!(Basic::ECDSAsecp256k1NT.code_len(), 4);
+        assert_eq!(Basic::ECDSAsecp256k1.code_len(), 4);
+        assert_eq!(Basic::Ed448NT.code_len(), 4);
+        assert_eq!(Basic::Ed448.code_len(), 4);
+    }
+
+    #[test]
+    fn test_derivative_b64_len() {
+        assert_eq!(Basic::Ed25519NT.derivative_b64_len(), 43);
+        assert_eq!(Basic::Ed25519.derivative_b64_len(), 43);
+        assert_eq!(Basic::X25519.derivative_b64_len(), 43);
+
+        assert_eq!(Basic::X448.derivative_b64_len(), 75);
+
+        assert_eq!(Basic::ECDSAsecp256k1NT.derivative_b64_len(), 47);
+        assert_eq!(Basic::ECDSAsecp256k1.derivative_b64_len(), 47);
+
+        assert_eq!(Basic::Ed448NT.derivative_b64_len(), 76);
+        assert_eq!(Basic::Ed448.derivative_b64_len(), 76);
+    }
+
+    #[test]
+    fn test_to_str() {
+        assert_eq!(Basic::Ed25519NT.to_str(), "B");
+        assert_eq!(Basic::X25519.to_str(), "C");
+        assert_eq!(Basic::Ed25519.to_str(), "D");
+        assert_eq!(Basic::X448.to_str(), "L");
+        assert_eq!(Basic::ECDSAsecp256k1NT.to_str(), "1AAA");
+        assert_eq!(Basic::ECDSAsecp256k1.to_str(), "1AAB");
+        assert_eq!(Basic::Ed448NT.to_str(), "1AAC");
+        assert_eq!(Basic::Ed448.to_str(), "1AAD");
+    }
+
+    #[test]
+    fn test_from_str() {
+        assert_eq!(Basic::from_str(&"B").unwrap(), Basic::Ed25519NT);
+        assert_eq!(Basic::from_str(&"C").unwrap(), Basic::X25519);
+        assert_eq!(Basic::from_str(&"D").unwrap(), Basic::Ed25519);
+        assert_eq!(Basic::from_str(&"L").unwrap(), Basic::X448);
+
+        assert_eq!(Basic::from_str(&"1AAA").unwrap(), Basic::ECDSAsecp256k1NT);
+        assert_eq!(Basic::from_str(&"1AAB").unwrap(), Basic::ECDSAsecp256k1);
+        assert_eq!(Basic::from_str(&"1AAC").unwrap(), Basic::Ed448NT);
+        assert_eq!(Basic::from_str(&"1AAD").unwrap(), Basic::Ed448);
     }
 }
