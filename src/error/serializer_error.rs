@@ -3,6 +3,9 @@ use std::fmt::{self, Display, Formatter};
 
 use serde::{de, ser};
 
+use crate::derivation::basic::Basic;
+use crate::error::serializer_error::Error::{Eof, ExpectedArray, ExpectedArrayComma, ExpectedArrayEnd, ExpectedBoolean, ExpectedEnum, ExpectedInteger, ExpectedMap, ExpectedMapColon, ExpectedMapComma, ExpectedMapEnd, ExpectedNull, ExpectedString, Message, Syntax, TrailingCharacters};
+
 pub type Result<T> = std::result::Result<T, Error>;
 
 // This is a bare-bones implementation. A real library would provide additional
@@ -51,36 +54,50 @@ impl de::Error for Error {
 }
 
 impl Display for Error {
-    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, formatter: &mut Formatter) -> fmt::Result {
         match self {
-            Error::Message(msg) => formatter.write_str(msg),
-            Error::Eof => formatter.write_str("unexpected end of input"),
-            Error::Syntax => formatter.write_str("incorrect syntax"),
-            Error::ExpectedBoolean => formatter.write_str("incorrect input: expected boolean"),
-            Error::ExpectedInteger => formatter.write_str("incorrect input: expected integer"),
-            Error::ExpectedString => formatter.write_str("incorrect input: expected string"),
-            Error::ExpectedNull => formatter.write_str("incorrect input: expected null"),
-            Error::ExpectedArray => formatter.write_str("incorrect input: expected array"),
-            Error::ExpectedArrayComma => {
+            Message(msg) => formatter.write_str(msg),
+            Eof => formatter.write_str("unexpected end of input"),
+            Syntax => formatter.write_str("incorrect syntax"),
+            ExpectedBoolean => formatter.write_str("incorrect input: expected boolean"),
+            ExpectedInteger => formatter.write_str("incorrect input: expected integer"),
+            ExpectedString => formatter.write_str("incorrect input: expected string"),
+            ExpectedNull => formatter.write_str("incorrect input: expected null"),
+            ExpectedArray => formatter.write_str("incorrect input: expected array"),
+            ExpectedArrayComma => {
                 formatter.write_str("incorrect input: expected array comma")
             }
-            Error::ExpectedArrayEnd => formatter.write_str("incorrect input: expected array end"),
-            Error::ExpectedMap => formatter.write_str("incorrect input: expected map"),
-            Error::ExpectedMapColon => formatter.write_str("incorrect input: expected map colon"),
-            Error::ExpectedMapComma => formatter.write_str("incorrect input: expected map comma"),
-            Error::ExpectedMapEnd => formatter.write_str("incorrect input: expected map end"),
-            Error::ExpectedEnum => formatter.write_str("incorrect input: expected enum"),
-            Error::TrailingCharacters => {
+            ExpectedArrayEnd => formatter.write_str("incorrect input: expected array end"),
+            ExpectedMap => formatter.write_str("incorrect input: expected map"),
+            ExpectedMapColon => formatter.write_str("incorrect input: expected map colon"),
+            ExpectedMapComma => formatter.write_str("incorrect input: expected map comma"),
+            ExpectedMapEnd => formatter.write_str("incorrect input: expected map end"),
+            ExpectedEnum => formatter.write_str("incorrect input: expected enum"),
+            TrailingCharacters => {
                 formatter.write_str("incorrect input: unexpected trailing characters")
             }
         }
     }
 }
 
-// impl Display for Error {
-//     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-//         todo!()
-//     }
-// }
+#[test]
+fn test_from_str() {
+    assert_eq!(&format!("{}", Message("foo".to_string())), "foo");
+    assert_eq!(&format!("{}", Eof), "unexpected end of input");
+    assert_eq!(&format!("{}", Syntax), "incorrect syntax");
+    assert_eq!(&format!("{}", ExpectedBoolean), "incorrect input: expected boolean");
+    assert_eq!(&format!("{}", ExpectedInteger), "incorrect input: expected integer");
+    assert_eq!(&format!("{}", ExpectedString), "incorrect input: expected string");
+    assert_eq!(&format!("{}", ExpectedNull), "incorrect input: expected null");
+    assert_eq!(&format!("{}", ExpectedArray), "incorrect input: expected array");
+    assert_eq!(&format!("{}", ExpectedArrayComma), "incorrect input: expected array comma");
+    assert_eq!(&format!("{}", ExpectedArrayEnd), "incorrect input: expected array end");
+    assert_eq!(&format!("{}", ExpectedMap), "incorrect input: expected map");
+    assert_eq!(&format!("{}", ExpectedMapColon), "incorrect input: expected map colon");
+    assert_eq!(&format!("{}", ExpectedMapComma), "incorrect input: expected map comma");
+    assert_eq!(&format!("{}", ExpectedMapEnd), "incorrect input: expected map end");
+    assert_eq!(&format!("{}", ExpectedEnum), "incorrect input: expected enum");
+    assert_eq!(&format!("{}", TrailingCharacters), "incorrect input: unexpected trailing characters");
+}
 
 impl std::error::Error for Error {}
