@@ -181,7 +181,25 @@ mod self_addressing_tests {
 
     #[test]
     fn test_self_addressing() {
-        let dig = SelfAddressing::Blake3_256.derive(b"abcdefghijklmnopqrstuvwxyz0123456789");
-        assert_eq!(dig.to_str(), "EsLkveIFUPvt38xhtgYYJRCCpAGO7WjjHVR37Pawv67E")
+        let der = SelfAddressing::Blake3_256.derive(b"abcdefghijklmnopqrstuvwxyz0123456789");
+        assert_eq!(der.to_str(), "EsLkveIFUPvt38xhtgYYJRCCpAGO7WjjHVR37Pawv67E");
+
+        let der = SelfAddressing::Blake3_512.derive(b"abcdefghijklmnopqrstuvwxyz0123456789");
+        assert_eq!(der.to_str(), "0DsLkveIFUPvt38xhtgYYJRCCpAGO7WjjHVR37Pawv67GaNK7TEsvL8TnpL3E8EF7fR4KFgQaeMYFMM0mFNWmP-g");
+
+        let der = SelfAddressing::SHA2_256.derive(b"abcdefghijklmnopqrstuvwxyz0123456789");
+        assert_eq!(der.to_str(), "IAR_CmU450lEUFUD4emkJKz8iqGdn9yg95-7ts4l77fY");
+
+        let der = SelfAddressing::SHA2_512.derive(b"abcdefghijklmnopqrstuvwxyz0123456789");
+        assert_eq!(der.to_str(), "0GpZtJIWoOOiBEO3LGS9rlHUGzOtCKhqT7k2N43S-c04mYCewx5SWbO0VJOI0CZWE2K-cVSNQ5O-dtp-6wGDlHDA");
+
+        let der = SelfAddressing::Blake2B512.derive(b"abcdefghijklmnopqrstuvwxyz0123456789");
+        assert_eq!(der.to_str(), "0FefJm_XA2SP8c_tg8TZDS0tnho1iFCO15rIXDksOBFqkEpPFOu9r8hoEjBaFP_ewvUnZoOegECZ1_qEF5h9bcJQ");
+
+        let der = SelfAddressing::SHA3_256.derive(b"abcdefghijklmnopqrstuvwxyz0123456789");
+        assert_eq!(der.to_str(), "HAV1P0Jucuk5IyFE_LxP955z5dh52NpDhXmEnrqDJ8cU");
+
+        let der = SelfAddressing::SHA3_512.derive(b"abcdefghijklmnopqrstuvwxyz0123456789");
+        assert_eq!(der.to_str(), "0E59Emwi3GR06eDd87T1qgIq6of-KgJMIUsw2RtV0i3YSUDN4paOZtnqvOYEKt8MdX16f83bZnB-gcKby8aOIQcA");
     }
 }
