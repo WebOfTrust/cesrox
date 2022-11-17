@@ -19,15 +19,6 @@ impl SelfSigning {
 }
 
 impl DerivationCode for SelfSigning {
-    fn to_str(&self) -> String {
-        match self {
-            Self::Ed25519Sha512 => "0B",
-            Self::ECDSAsecp256k1Sha256 => "0C",
-            Self::Ed448 => "1AAE",
-        }
-        .into()
-    }
-
     fn code_len(&self) -> usize {
         match self {
             Self::Ed25519Sha512 | Self::ECDSAsecp256k1Sha256 => 2,
@@ -40,6 +31,15 @@ impl DerivationCode for SelfSigning {
             Self::Ed25519Sha512 | Self::ECDSAsecp256k1Sha256 => 86,
             Self::Ed448 => 152,
         }
+    }
+
+    fn to_str(&self) -> String {
+        match self {
+            Self::Ed25519Sha512 => "0B",
+            Self::ECDSAsecp256k1Sha256 => "0C",
+            Self::Ed448 => "1AAE",
+        }
+        .into()
     }
 }
 

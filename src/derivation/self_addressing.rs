@@ -49,21 +49,6 @@ impl SelfAddressing {
 }
 
 impl DerivationCode for SelfAddressing {
-    fn to_str(&self) -> String {
-        match self {
-            Self::Blake3_256 => "E",
-            Self::Blake2B256(_) => "F",
-            Self::Blake2S256(_) => "G",
-            Self::SHA3_256 => "H",
-            Self::SHA2_256 => "I",
-            Self::Blake3_512 => "0D",
-            Self::SHA3_512 => "0E",
-            Self::Blake2B512 => "0F",
-            Self::SHA2_512 => "0G",
-        }
-        .into()
-    }
-
     fn code_len(&self) -> usize {
         match self {
             Self::Blake3_256
@@ -84,6 +69,21 @@ impl DerivationCode for SelfAddressing {
             | Self::SHA2_256 => 43,
             Self::Blake3_512 | Self::SHA3_512 | Self::Blake2B512 | Self::SHA2_512 => 86,
         }
+    }
+
+    fn to_str(&self) -> String {
+        match self {
+            Self::Blake3_256 => "E",
+            Self::Blake2B256(_) => "F",
+            Self::Blake2S256(_) => "G",
+            Self::SHA3_256 => "H",
+            Self::SHA2_256 => "I",
+            Self::Blake3_512 => "0D",
+            Self::SHA3_512 => "0E",
+            Self::Blake2B512 => "0F",
+            Self::SHA2_512 => "0G",
+        }
+        .into()
     }
 }
 
@@ -170,4 +170,18 @@ fn sha2_512_digest(input: &[u8]) -> Vec<u8> {
     let mut h = Sha512::new();
     h.update(input);
     h.finalize().to_vec()
+}
+
+#[cfg(test)]
+mod self_addressing_tests {
+    use base64::URL_SAFE;
+    use std::str;
+    use crate::derivation::self_addressing::SelfAddressing;
+    use crate::prefix::Prefix;
+
+    #[test]
+    fn test_self_addressing() {
+        let dig = SelfAddressing::Blake3_256.derive(b"abcdefghijklmnopqrstuvwxyz0123456789");
+        assert_eq!(dig.to_str(), "EsLkveIFUPvt38xhtgYYJRCCpAGO7WjjHVR37Pawv67E")
+    }
 }
