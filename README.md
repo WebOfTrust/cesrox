@@ -1,7 +1,7 @@
 # cesrox
 
 [![cesrox](https://github.com/WebOfTrust/cesrox/actions/workflows/test.yml/badge.svg)](https://github.com/WebOfTrust/cesrox/actions/workflows/test.yml)
-[![codecov](https://codecov.io/gh/WebOfTrust/cesrox/branch/main/graph/badge.svg)](https://codecov.io/gh/WebOfTrust/cesrox)
+[![codecov](https://codecov.io/gh/WebOfTrust/cesrox/branch/main/graph/badge.svg?token=QEEVE1WTPX)](https://codecov.io/gh/WebOfTrust/cesrox)
 
 Rust implementation of the core CESR encoding format according to the [IETF CESR Spec](https://github.com/WebOfTrust/ietf-cesr). A bridge to the beautiful island.
 
