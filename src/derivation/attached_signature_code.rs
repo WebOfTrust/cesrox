@@ -19,19 +19,6 @@ impl AttachedSignatureCode {
 }
 
 impl DerivationCode for AttachedSignatureCode {
-    // TODO, this will only work with indicies up to 63
-    fn to_str(&self) -> String {
-        [
-            match self.code {
-                SelfSigning::Ed25519Sha512 => "A",
-                SelfSigning::ECDSAsecp256k1Sha256 => "B",
-                SelfSigning::Ed448 => "0AA",
-            },
-            &num_to_b64(self.index),
-        ]
-        .join("")
-    }
-
     fn code_len(&self) -> usize {
         match self.code {
             SelfSigning::Ed25519Sha512 | SelfSigning::ECDSAsecp256k1Sha256 => 2,
@@ -44,6 +31,19 @@ impl DerivationCode for AttachedSignatureCode {
             SelfSigning::Ed25519Sha512 | SelfSigning::ECDSAsecp256k1Sha256 => 86,
             SelfSigning::Ed448 => 152,
         }
+    }
+
+    // TODO, this will only work with indicies up to 63
+    fn to_str(&self) -> String {
+        [
+            match self.code {
+                SelfSigning::Ed25519Sha512 => "A",
+                SelfSigning::ECDSAsecp256k1Sha256 => "B",
+                SelfSigning::Ed448 => "0AA",
+            },
+            &num_to_b64(self.index),
+        ]
+        .join("")
     }
 }
 
