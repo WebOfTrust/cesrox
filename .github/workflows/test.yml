@@ -22,7 +22,7 @@ jobs:
 
       - uses: actions/checkout@v2
       - name: Build
-        run: | 
+        run: |
           cargo check
           cargo build
           cargo test
