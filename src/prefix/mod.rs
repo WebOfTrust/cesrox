@@ -1,16 +1,7 @@
-use crate::{
-    derivation::{basic::Basic, self_signing::SelfSigning},
-    error::Error,
-};
-use base64::encode_config;
 use core::str::FromStr;
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
-pub mod attached_signature;
-pub mod basic;
-pub mod seed;
-pub mod self_addressing;
-pub mod self_signing;
+use base64::{decode, encode_config};
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 pub use attached_signature::AttachedSignaturePrefix;
 pub use basic::BasicPrefix;
@@ -18,7 +9,18 @@ pub use seed::SeedPrefix;
 pub use self_addressing::SelfAddressingPrefix;
 pub use self_signing::SelfSigningPrefix;
 
-pub trait Prefix: FromStr<Err = Error> {
+use crate::{
+    derivation::{basic::Basic, self_signing::SelfSigning},
+    error::Error,
+};
+
+pub mod attached_signature;
+pub mod basic;
+pub mod seed;
+pub mod self_addressing;
+pub mod self_signing;
+
+pub trait Prefix: FromStr<Err=Error> {
     fn derivative(&self) -> Vec<u8>;
     fn derivation_code(&self) -> String;
     fn to_str(&self) -> String {
@@ -27,8 +29,20 @@ pub trait Prefix: FromStr<Err = Error> {
             0 => "".to_string(),
             _ => {
                 let dc = self.derivation_code();
-                let ec = encode_config(self.derivative(), base64::URL_SAFE_NO_PAD);
-                [dc, ec].join("")
+                println!("{}", dc);
+                let der = self.derivative();
+                let mut zero_vec = vec![0; dc.len()];
+
+                println!("zero {:?}", zero_vec);
+                let cc = [zero_vec, der].concat();
+                println!("concat {:?}", cc);
+                println!("concat {:?}", cc.len());
+
+                let mut ec = encode_config(cc, base64::URL_SAFE);
+                println!("encode after config {}", ec);
+                ec.replace_range(0..dc.len(), &dc);
+                println!("{}", ec);
+                ec
             }
         }
     }
@@ -74,8 +88,8 @@ impl Prefix for IdentifierPrefix {
 /// Serde compatible Serialize
 impl Serialize for IdentifierPrefix {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
+        where
+            S: Serializer,
     {
         serializer.serialize_str(&self.to_str())
     }
@@ -84,8 +98,8 @@ impl Serialize for IdentifierPrefix {
 /// Serde compatible Deserialize
 impl<'de> Deserialize<'de> for IdentifierPrefix {
     fn deserialize<D>(deserializer: D) -> Result<IdentifierPrefix, D::Error>
-    where
-        D: Deserializer<'de>,
+        where
+            D: Deserializer<'de>,
     {
         let s = String::deserialize(deserializer)?;
 
@@ -144,13 +158,19 @@ pub fn derive(seed: &SeedPrefix, transferable: bool) -> Result<BasicPrefix, Erro
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::{
-        derivation::self_addressing::SelfAddressing,
-        keys::{PrivateKey, PublicKey},
-    };
+    use std::str;
+
+    use base64::URL_SAFE;
     use ed25519_dalek::Keypair;
     use rand::rngs::OsRng;
+
+    use crate::{
+        keys::{PrivateKey, PublicKey},
+    };
+    use crate::derivation::self_addressing::SelfAddressing;
+    use crate::prefix::{Prefix, SelfAddressingPrefix};
+
+    use super::*;
 
     #[test]
     fn simple_deserialize() -> Result<(), Error> {
@@ -236,8 +256,8 @@ mod tests {
         /// Helper function that checks whether all codes fulfill the condition
         /// given by predicate `pred`.
         fn all_codes<F>(codes: Vec<(&str, usize)>, pred: F) -> Result<(), Error>
-        where
-            F: Fn(IdentifierPrefix) -> bool,
+            where
+                F: Fn(IdentifierPrefix) -> bool,
         {
             for (code, length) in codes {
                 let pref: IdentifierPrefix =
@@ -293,9 +313,9 @@ mod tests {
                     ed25519_dalek::PublicKey::from_bytes(&[0; 32])?
                         .to_bytes()
                         .to_vec()
-                )
+                ),
             )
-            .to_str(),
+                .to_str(),
             ["B".to_string(), "A".repeat(43)].join("")
         );
         assert_eq!(
@@ -305,9 +325,9 @@ mod tests {
                     ed25519_dalek::PublicKey::from_bytes(&[0; 32])?
                         .to_bytes()
                         .to_vec()
-                )
+                ),
             )
-            .to_str(),
+                .to_str(),
             ["C".to_string(), "A".repeat(43)].join("")
         );
         assert_eq!(
@@ -317,9 +337,9 @@ mod tests {
                     ed25519_dalek::PublicKey::from_bytes(&[0; 32])?
                         .to_bytes()
                         .to_vec()
-                )
+                ),
             )
-            .to_str(),
+                .to_str(),
             ["D".to_string(), "A".repeat(43)].join("")
         );
         assert_eq!(
@@ -396,5 +416,16 @@ mod tests {
         );
 
         Ok(())
+    }
+
+    #[test]
+    fn test_self_addressing() {
+        let dig = SelfAddressing::Blake3_256.digest(b"abcdefghijklmnopqrstuvwxyz0123456789");
+        let pre = SelfAddressingPrefix::new(SelfAddressing::Blake3_256, dig);
+        assert_eq!(pre.to_str(), "ELC5L3iBVD77d_MYbYGGCUQgqQBju1o4x1Ud-z2sL-ux");
+
+        let dig = SelfAddressing::SHA3_512.digest(b"abcdefghijklmnopqrstuvwxyz0123456789");
+        let pre = SelfAddressingPrefix::new(SelfAddressing::SHA3_512, dig);
+        assert_eq!(pre.to_str(), "ELC5L3iBVD77d_MYbYGGCUQgqQBju1o4x1Ud-z2sL-ux")
     }
 }

@@ -35,15 +35,17 @@ impl DerivationCode for AttachedSignatureCode {
 
     // TODO, this will only work with indicies up to 63
     fn to_str(&self) -> String {
-        [
+        let x = [
             match self.code {
                 SelfSigning::Ed25519Sha512 => "A",
                 SelfSigning::ECDSAsecp256k1Sha256 => "B",
-                SelfSigning::Ed448 => "0AA",
+                SelfSigning::Ed448 => "0A",
             },
             &num_to_b64(self.index),
         ]
-        .join("")
+        .join("");
+        println!("num_b64 {} ", &num_to_b64(self.index));
+        x
     }
 }
 
@@ -65,7 +67,7 @@ impl FromStr for AttachedSignatureCode {
                     SelfSigning::Ed448,
                     b64_to_num(&s.as_bytes()[3..4])?,
                 )),
-                _ => Err(Error::DeserializeError("Unknows signature code".into())),
+                _ => Err(Error::DeserializeError("Unknown signature code".into())),
             },
             _ => Err(Error::DeserializeError("Unknown attachment code".into())),
         }

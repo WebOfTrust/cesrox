@@ -182,24 +182,24 @@ mod self_addressing_tests {
     #[test]
     fn test_self_addressing() {
         let der = SelfAddressing::Blake3_256.derive(b"abcdefghijklmnopqrstuvwxyz0123456789");
-        assert_eq!(der.to_str(), "EsLkveIFUPvt38xhtgYYJRCCpAGO7WjjHVR37Pawv67E");
+        assert_eq!(der.to_str(), "ELC5L3iBVD77d_MYbYGGCUQgqQBju1o4x1Ud-z2sL-ux");
 
         let der = SelfAddressing::Blake3_512.derive(b"abcdefghijklmnopqrstuvwxyz0123456789");
-        assert_eq!(der.to_str(), "0DsLkveIFUPvt38xhtgYYJRCCpAGO7WjjHVR37Pawv67GaNK7TEsvL8TnpL3E8EF7fR4KFgQaeMYFMM0mFNWmP-g");
+        assert_eq!(der.to_str(), "0DCwuS94gVQ--3fzGG2BhglEIKkAY7taOMdVHfs9rC_rsZo0rtMSy8vxOekvcTwQXt9HgoWBBp4xgUwzSYU1aY_6");
 
         let der = SelfAddressing::SHA2_256.derive(b"abcdefghijklmnopqrstuvwxyz0123456789");
-        assert_eq!(der.to_str(), "IAR_CmU450lEUFUD4emkJKz8iqGdn9yg95-7ts4l77fY");
+        assert_eq!(der.to_str(), "IAEfwplOOdJRFBVA-HppCSs_IqhnZ_coPefu7bOJe-32");
 
         let der = SelfAddressing::SHA2_512.derive(b"abcdefghijklmnopqrstuvwxyz0123456789");
-        assert_eq!(der.to_str(), "0GpZtJIWoOOiBEO3LGS9rlHUGzOtCKhqT7k2N43S-c04mYCewx5SWbO0VJOI0CZWE2K-cVSNQ5O-dtp-6wGDlHDA");
+        assert_eq!(der.to_str(), "0GClm0khag46IEQ7csZL2uUdQbM60IqGpPuTY3jdL5zTiZgJ7DHlJZs7RUk4jQJlYTYr5xVI1Dk7522n7rAYOUcM");
 
         let der = SelfAddressing::Blake2B512.derive(b"abcdefghijklmnopqrstuvwxyz0123456789");
-        assert_eq!(der.to_str(), "0FefJm_XA2SP8c_tg8TZDS0tnho1iFCO15rIXDksOBFqkEpPFOu9r8hoEjBaFP_ewvUnZoOegECZ1_qEF5h9bcJQ");
+        assert_eq!(der.to_str(), "0FB58mb9cDZI_xz-2DxNkNLS2eGjWIUI7XmshcOSw4EWqQSk8U672vyGgSMFoU_97C9Sdmg56AQJnX-oQXmH1twl");
 
         let der = SelfAddressing::SHA3_256.derive(b"abcdefghijklmnopqrstuvwxyz0123456789");
-        assert_eq!(der.to_str(), "HAV1P0Jucuk5IyFE_LxP955z5dh52NpDhXmEnrqDJ8cU");
+        assert_eq!(der.to_str(), "HAFdT9CbnLpOSMhRPy8T_eec-XYedjaQ4V5hJ66gyfHF");
 
         let der = SelfAddressing::SHA3_512.derive(b"abcdefghijklmnopqrstuvwxyz0123456789");
-        assert_eq!(der.to_str(), "0E59Emwi3GR06eDd87T1qgIq6of-KgJMIUsw2RtV0i3YSUDN4paOZtnqvOYEKt8MdX16f83bZnB-gcKby8aOIQcA");
+        assert_eq!(der.to_str(), "0EDn0SbCLcZHTp4N3ztPWqAirqh_4qAkwhSzDZG1XSLdhJQM3ilo5m2eq85gQq3wx1fXp_zdtmcH6BwpvLxo4hBw");
     }
 }
