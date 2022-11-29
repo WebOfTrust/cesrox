@@ -46,9 +46,15 @@ impl FromStr for IdentifierPrefix {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match BasicPrefix::from_str(s) {
             Ok(bp) => Ok(Self::Basic(bp)),
-            Err(_) => match SelfAddressingPrefix::from_str(s) {
-                Ok(sa) => Ok(Self::SelfAddressing(sa)),
-                Err(_) => Ok(Self::SelfSigning(SelfSigningPrefix::from_str(s)?)),
+            Err(err) => {
+                match err {
+                    Error::Base64DecodingError {source: _ } => return Err(err),
+                    _ => ()
+                }
+                match SelfAddressingPrefix::from_str(s) {
+                    Ok(sa) => Ok(Self::SelfAddressing(sa)),
+                    Err(_) => Ok(Self::SelfSigning(SelfSigningPrefix::from_str(s)?)),
+                }
             },
         }
     }
@@ -121,13 +127,13 @@ pub fn verify(
                 .verify_ecdsa(data.as_ref(), &signature.signature)),
             _ => Err(Error::SemanticError("wrong sig type".to_string())),
         },
-        _ => Err(Error::SemanticError("inelligable key type".to_string())),
+        _ => Err(Error::SemanticError("ineligible key type".to_string())),
     }
 }
 
 /// Derive
 ///
-/// Derives the Basic Prefix corrosponding to the given Seed Prefix
+/// Derives the Basic Prefix corresponding to the given Seed Prefix
 pub fn derive(seed: &SeedPrefix, transferable: bool) -> Result<BasicPrefix, Error> {
     let (pk, _) = seed.derive_key_pair()?;
     Ok(BasicPrefix::new(
@@ -144,6 +150,7 @@ pub fn derive(seed: &SeedPrefix, transferable: bool) -> Result<BasicPrefix, Erro
 
 #[cfg(test)]
 mod tests {
+    use std::borrow::Borrow;
     use super::*;
     use crate::{
         derivation::self_addressing::SelfAddressing,
@@ -180,14 +187,16 @@ mod tests {
         );
 
         // not a real prefix
-        assert!(
-            !IdentifierPrefix::from_str("ZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA").is_ok()
-        );
+        assert!(match IdentifierPrefix::from_str("ZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA").unwrap_err() {
+            Error::DeserializeError(msg) => msg.contains("Unknown master code"),
+            _ => false
+        });
 
         // not base 64 URL
-        assert!(
-            !IdentifierPrefix::from_str("BAAAAAAAAAAAAAAAAAAA/AAAAAAAAAAAAAAAAAAAAAAAA").is_ok()
-        );
+        assert!(match IdentifierPrefix::from_str("BAAAAAAAAAAAAAAAAAAA/AAAAAAAAAAAAAAAAAAAAAAA").unwrap_err() {
+            Error::Base64DecodingError {source: _ } => true,
+            _ => false
+        });
 
         Ok(())
     }
