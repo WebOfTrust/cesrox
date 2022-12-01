@@ -80,7 +80,6 @@ impl FromStr for Basic {
     }
 }
 
-
 #[cfg(test)]
 mod basic_tests {
     use crate::derivation::basic::Basic;
