@@ -94,7 +94,6 @@ pub enum Error {
     //
     // #[error(transparent)]
     // SerdeSerError(#[from] serializer_error::Error),
-
     #[cfg(feature = "wallet")]
     #[error(transparent)]
     WalletError(#[from] universal_wallet::Error),
