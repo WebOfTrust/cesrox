@@ -174,10 +174,10 @@ fn sha2_512_digest(input: &[u8]) -> Vec<u8> {
 
 #[cfg(test)]
 mod self_addressing_tests {
-    use base64::URL_SAFE;
-    use std::str;
     use crate::derivation::self_addressing::SelfAddressing;
     use crate::prefix::Prefix;
+    use base64::URL_SAFE;
+    use std::str;
 
     #[test]
     fn test_self_addressing() {
