@@ -71,3 +71,22 @@ impl FromStr for SelfSigning {
         }
     }
 }
+
+
+#[cfg(test)]
+mod self_signing_tests {
+    use crate::derivation::self_signing::SelfSigning;
+    use crate::prefix::Prefix;
+
+    #[test]
+    fn test_self_signing() {
+        let der = SelfSigning::Ed25519Sha512.derive(vec![0; 64]);
+        assert_eq!(der.to_str(), ["0B".to_string(), "A".repeat(86)].join(""));
+
+        let der = SelfSigning::ECDSAsecp256k1Sha256.derive(vec![0; 64]);
+        assert_eq!(der.to_str(), ["0C".to_string(), "A".repeat(86)].join(""));
+
+        let der = SelfSigning::Ed448.derive(vec![0; 114]);
+        assert_eq!(der.to_str(), ["1AAE".to_string(), "A".repeat(152)].join(""));
+    }
+}
