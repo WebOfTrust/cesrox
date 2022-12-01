@@ -21,6 +21,7 @@ jobs:
           override: true
 
       - uses: actions/checkout@v2
+<<<<<<< HEAD
       - name: Check
         run: cargo check
 
@@ -32,6 +33,13 @@ jobs:
 
       - name: Format
         run: cargo fmt --all -- --check
+=======
+      - name: Build
+        run: | 
+          cargo build
+          cargo test
+          cargo fmt --all -- --check
+>>>>>>> e6506fb (adds cargo fmt)
 
       - name: Run cargo-tarpaulin
         uses: actions-rs/tarpaulin@v0.1
