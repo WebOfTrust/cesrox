@@ -8,7 +8,19 @@ A bridge to the beautiful island.
  
 It represents cryptographic primitives and any other data structure compactly and efficiently with a combined binary and text protocol.
 
-# Community
+## Contributing
+
+To run tests:
+```shell
+cargo test
+```
+
+To check formatting:
+```shell
+cargo fmt
+```
+
+## Community
 ## Bi-weekly Meeting 
 - [Zoom Link](https://us06web.zoom.us/j/88102305873?pwd=Wm01TEJKUWc0aE51a0QzZ2hNbTV2Zz09)
 - [HackMD Link](https://hackmd.io/UQaEI0w8Thy_xRF7oYX03Q?view) Bi-Weekly Meeting Agenda and Minutes 
