@@ -21,11 +21,17 @@ jobs:
           override: true
 
       - uses: actions/checkout@v2
+      - name: Check
+        run: cargo check
+
       - name: Build
-        run: | 
-          cargo build
-          cargo test
-          cargo fmt --all -- --check
+        run: cargo build
+
+      - name: Test
+        run: cargo test
+
+      - name: Format
+        run: cargo fmt --all -- --check
 
       - name: Run cargo-tarpaulin
         uses: actions-rs/tarpaulin@v0.1
