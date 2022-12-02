@@ -48,14 +48,14 @@ impl FromStr for IdentifierPrefix {
             Ok(bp) => Ok(Self::Basic(bp)),
             Err(err) => {
                 match err {
-                    Error::Base64DecodingError {source: _ } => return Err(err),
-                    _ => ()
+                    Error::Base64DecodingError { source: _ } => return Err(err),
+                    _ => (),
                 }
                 match SelfAddressingPrefix::from_str(s) {
                     Ok(sa) => Ok(Self::SelfAddressing(sa)),
                     Err(_) => Ok(Self::SelfSigning(SelfSigningPrefix::from_str(s)?)),
                 }
-            },
+            }
         }
     }
 }
@@ -150,7 +150,6 @@ pub fn derive(seed: &SeedPrefix, transferable: bool) -> Result<BasicPrefix, Erro
 
 #[cfg(test)]
 mod tests {
-    use std::borrow::Borrow;
     use super::*;
     use crate::{
         derivation::self_addressing::SelfAddressing,
@@ -158,6 +157,7 @@ mod tests {
     };
     use ed25519_dalek::Keypair;
     use rand::rngs::OsRng;
+    use std::borrow::Borrow;
 
     #[test]
     fn simple_deserialize() -> Result<(), Error> {
@@ -187,16 +187,24 @@ mod tests {
         );
 
         // not a real prefix
-        assert!(match IdentifierPrefix::from_str("ZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA").unwrap_err() {
-            Error::DeserializeError(msg) => msg.contains("Unknown master code"),
-            _ => false
-        });
+        assert!(
+            match IdentifierPrefix::from_str("ZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+                .unwrap_err()
+            {
+                Error::DeserializeError(msg) => msg.contains("Unknown master code"),
+                _ => false,
+            }
+        );
 
         // not base 64 URL
-        assert!(match IdentifierPrefix::from_str("BAAAAAAAAAAAAAAAAAAA/AAAAAAAAAAAAAAAAAAAAAAA").unwrap_err() {
-            Error::Base64DecodingError {source: _ } => true,
-            _ => false
-        });
+        assert!(
+            match IdentifierPrefix::from_str("BAAAAAAAAAAAAAAAAAAA/AAAAAAAAAAAAAAAAAAAAAAA")
+                .unwrap_err()
+            {
+                Error::Base64DecodingError { source: _ } => true,
+                _ => false,
+            }
+        );
 
         Ok(())
     }
