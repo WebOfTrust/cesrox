@@ -87,6 +87,7 @@ mod basic_tests {
     use crate::derivation::DerivationCode;
     use crate::error::Error;
     use crate::error::Error::DeserializeError;
+    use crate::keys::PublicKey;
 
     #[test]
     fn test_code_len() {
@@ -139,5 +140,35 @@ mod basic_tests {
         assert_eq!(Basic::from_str(&"1AAB").unwrap(), Basic::ECDSAsecp256k1);
         assert_eq!(Basic::from_str(&"1AAC").unwrap(), Basic::Ed448NT);
         assert_eq!(Basic::from_str(&"1AAD").unwrap(), Basic::Ed448);
+    }
+
+    #[test]
+    fn test_basic() {
+        use crate::derivation::basic::Basic;
+        use crate::prefix::Prefix;
+
+        let der = Basic::ECDSAsecp256k1NT.derive(PublicKey::new([0; 33].to_vec()));
+        assert_eq!(der.to_str(), ["1AAA".to_string(), "A".repeat(44)].join(""));
+
+        let der = Basic::ECDSAsecp256k1.derive(PublicKey::new([0; 33].to_vec()));
+        assert_eq!(der.to_str(), ["1AAB".to_string(), "A".repeat(44)].join(""));
+
+        let der = Basic::Ed25519NT.derive(PublicKey::new([0; 32].to_vec()));
+        assert_eq!(der.to_str(), ["B".to_string(), "A".repeat(43)].join(""));
+
+        let der = Basic::Ed25519.derive(PublicKey::new([0; 32].to_vec()));
+        assert_eq!(der.to_str(), ["D".to_string(), "A".repeat(43)].join(""));
+
+        let der = Basic::Ed448NT.derive(PublicKey::new([0; 57].to_vec()));
+        assert_eq!(der.to_str(), ["1AAC".to_string(), "A".repeat(76)].join(""));
+
+        let der = Basic::Ed448.derive(PublicKey::new([0; 57].to_vec()));
+        assert_eq!(der.to_str(), ["1AAD".to_string(), "A".repeat(76)].join(""));
+
+        let der = Basic::X25519.derive(PublicKey::new([0; 32].to_vec()));
+        assert_eq!(der.to_str(), ["C".to_string(), "A".repeat(43)].join(""));
+
+        let der = Basic::X448.derive(PublicKey::new([0; 56].to_vec()));
+        assert_eq!(der.to_str(), ["L".to_string(), "A".repeat(75)].join(""));
     }
 }
