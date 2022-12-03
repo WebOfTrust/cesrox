@@ -171,5 +171,4 @@ mod basic_tests {
         let der = Basic::X448.derive(PublicKey::new([0; 56].to_vec()));
         assert_eq!(der.to_str(), ["L".to_string(), "A".repeat(75)].join(""));
     }
-
 }

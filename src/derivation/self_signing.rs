@@ -72,7 +72,6 @@ impl FromStr for SelfSigning {
     }
 }
 
-
 #[cfg(test)]
 mod self_signing_tests {
     use crate::derivation::self_signing::SelfSigning;
