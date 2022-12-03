@@ -53,7 +53,13 @@ impl FromStr for IdentifierPrefix {
                 }
                 match SelfAddressingPrefix::from_str(s) {
                     Ok(sa) => Ok(Self::SelfAddressing(sa)),
-                    Err(_) => Ok(Self::SelfSigning(SelfSigningPrefix::from_str(s)?)),
+                    Err(err) => {
+                        match err {
+                            Error::Base64DecodingError { source: _ } => return Err(err),
+                            _ => (),
+                        }
+                        Ok(Self::SelfSigning(SelfSigningPrefix::from_str(s)?))
+                    }
                 }
             }
         }
@@ -205,6 +211,35 @@ mod tests {
                 _ => false,
             }
         );
+
+        Ok(())
+    }
+
+    #[test]
+    fn handle_base64_decoding_error() -> Result<(), Error> {
+        // verify self-signing invalid base64 error is handled
+        assert!(match IdentifierPrefix::from_str(
+            ["0C".to_string(), "A".repeat(85), "/".to_string()]
+                .join("")
+                .as_str()
+        )
+        .unwrap_err()
+        {
+            Error::Base64DecodingError { source: _ } => true,
+            _ => false,
+        });
+
+        //verify behavior with self-addressing prefixes
+        assert!(match IdentifierPrefix::from_str(
+            ["E".to_string(), "A".repeat(42), "/".to_string()]
+                .join("")
+                .as_str()
+        )
+        .unwrap_err()
+        {
+            Error::Base64DecodingError { source: _ } => true,
+            _ => false,
+        });
 
         Ok(())
     }
