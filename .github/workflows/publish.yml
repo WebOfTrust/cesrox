@@ -1,22 +1,19 @@
-name: Run tests
+name: publish
 
 on:
   push:
-    branches:
-      - 'main'
-  pull_request:
-
+    tags:
+      - "v*"
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
       - uses: actions/checkout@v2
-      - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
+      - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           override: true
@@ -36,12 +33,6 @@ jobs:
       - name: Format
         run: cargo fmt --all -- --check
 
-      - name: Run cargo-tarpaulin
-        uses: actions-rs/tarpaulin@v0.1
+      - uses: katyo/publish-crates@v1
         with:
-          version: '0.22.0'
-
-      - name: Upload to codecov.io
-        uses: codecov/codecov-action@v3
-        with:
-          token: ${{secrets.CODECOV_TOKEN}}
+          registry-token: ${{ secrets.CARGO_REGISTRY_TOKEN }}
