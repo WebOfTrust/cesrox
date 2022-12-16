@@ -8,6 +8,7 @@ use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 pub mod attached_signature;
 pub mod basic;
+pub mod datetime;
 pub mod seed;
 pub mod self_addressing;
 pub mod self_signing;
