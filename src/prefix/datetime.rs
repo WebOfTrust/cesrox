@@ -17,7 +17,12 @@ impl FromStr for DateTimePrefix {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match &s[..4] {
             "1AAG" => {
-                let timestamp = s[4..].parse::<TimeStamp>().unwrap();
+                let timestamp = s[4..]
+                    .replace('c', ":")
+                    .replace('d', ".")
+                    .replace('p', "+")
+                    .parse::<TimeStamp>()
+                    .unwrap();
                 let datetimeprefix = DateTimePrefix {
                     datetime: timestamp,
                 };
@@ -33,10 +38,21 @@ impl FromStr for DateTimePrefix {
 
 impl Prefix for DateTimePrefix {
     fn derivative(&self) -> Vec<u8> {
-        self.datetime.to_string().into_bytes()
+        self.datetime
+            .to_rfc3339_opts(chrono::SecondsFormat::Micros, false)
+            .replace(':', "c")
+            .replace('.', "d")
+            .replace('+', "p")
+            .into_bytes()
     }
     fn derivation_code(&self) -> String {
         "1AAG".to_owned()
+    }
+    fn to_str(&self) -> String {
+        let derivative = std::str::from_utf8(&self.derivative())
+            .expect("Invalid UTF8 string")
+            .to_owned();
+        [self.derivation_code(), derivative].join("")
     }
 }
 
@@ -45,10 +61,10 @@ mod datetime_tests {
     use super::*;
 
     #[test]
-    fn test_datetime() -> Result<(), Error> {
-        let timestamp_str = "1AAG2020-08-22T17:50:09.988921+00:00";
-        let timestamp: DateTimePrefix = timestamp_str.parse().unwrap();
-        println!("{:?}", timestamp);
-        Ok(())
+    fn test_datetime() {
+        let timestamp_str = "1AAG2020-08-22T17c50c09d988921p00c00";
+        let timestamp = timestamp_str.parse::<DateTimePrefix>();
+        assert!(timestamp.is_ok());
+        assert_eq!(timestamp.unwrap().to_str(), timestamp_str);
     }
 }
